@@ -63,10 +63,11 @@
 
   /* life-stage base factors (× RER) and meals per day */
   var STAGES = {
-    "puppy-young": { factor: 3.0, meals: 4 },
-    "puppy":       { factor: 2.0, meals: 3 },
-    "adult":       { factor: 1.6, meals: 2 },
-    "senior":      { factor: 1.4, meals: 2 }
+    "puppy-young":  { factor: 3.0, meals: 4 },
+    "puppy":        { factor: 2.0, meals: 3 },
+    "puppy-giant":  { factor: 1.8, meals: 3 },
+    "adult":        { factor: 1.6, meals: 2 },
+    "senior":       { factor: 1.4, meals: 2 }
   };
 
   var ACTIVITY_ADJUST = { low: -0.2, normal: 0, high: 0.3 };
@@ -216,6 +217,11 @@
     var noteEl = document.getElementById("resultNote");
     var notes = [];
 
+    /* giant-breed puppy: applies to both modes, safety-critical */
+    if (stageKey === "puppy-giant") {
+      notes.push("ลูกสุนัขพันธุ์ใหญ่/ยักษ์ต้อง<strong>ควบคุมไม่ให้โตเร็วเกินไป</strong> — การให้พลังงานหรือแคลเซียมมากเกินเสี่ยงต่อปัญหาข้อและกระดูก ตัวเลขนี้ตั้งไว้ต่ำกว่าลูกสุนัขทั่วไปโดยตั้งใจ และควรปรึกษาสัตวแพทย์ควบคู่ไปด้วย");
+    }
+
     if (mode === "preset") {
       var formulaKey = getRadio("formula");
       if (isPuppy && formulaKey !== "puppy") {
@@ -234,6 +240,9 @@
         notes.push("ลูกสุนัขต้องการแคลเซียมและ DHA สูงเป็นพิเศษ แนะนำปรึกษาสัตวแพทย์ก่อนให้อาหารปรุงเองเป็นหลัก");
       }
     }
+
+    /* always-on reminder — the real gauge is body condition, not the formula */
+    notes.push("<strong>สำคัญ:</strong> ตัวเลขนี้อิงน้ำหนักตัวและเป็นค่าเริ่มต้น เมตาบอลิซึมของน้องแต่ละตัวต่างกันได้ถึง ±20% แม้สายพันธุ์เดียวกัน — ยึด<strong>รูปร่างตัวจริง (Body Condition Score)</strong> เป็นหลัก: คลำซี่โครงเจอแต่ไม่เห็นชัด และมีเอวคอดเมื่อมองจากด้านบน คือหุ่นในอุดมคติ");
 
     noteEl.innerHTML = notes.map(function (n) { return "<p>" + n + "</p>"; }).join("");
 
