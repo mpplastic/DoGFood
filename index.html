@@ -1,372 +1,384 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>คำนวณสารอาหารที่น้องหมาต้องการต่อวัน</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --mustard:#f4a900;
-    --terracotta:#c1666b;
-    --beige:#d4b896;
-    --choco:#4a403a;
-    --cream:#fbf6ee;
-    --card:#ffffff;
-    --line:#ece2d3;
-    --muted:#8a7f74;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{
-    font-family:'Sarabun',sans-serif;
-    background:var(--cream);
-    color:var(--choco);
-    line-height:1.6;
-    padding:0 0 60px;
-  }
-  h1,h2,h3,.num{font-family:'Kanit',sans-serif;font-weight:500;}
-  .wrap{max-width:860px;margin:0 auto;padding:0 20px;}
-
-  header{
-    background:linear-gradient(135deg,var(--mustard),var(--terracotta));
-    color:#fff;text-align:center;padding:44px 20px 40px;
-  }
-  header .paw{font-size:34px;}
-  header h1{font-size:27px;font-weight:600;margin:6px 0 8px;}
-  header p{font-size:15px;opacity:.95;max-width:520px;margin:0 auto;}
-
-  section{background:var(--card);border:1px solid var(--line);border-radius:18px;
-    padding:22px 22px 24px;margin-top:22px;box-shadow:0 4px 18px rgba(74,64,58,.05);}
-  .step{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
-  .step .n{width:28px;height:28px;border-radius:50%;background:var(--mustard);color:#fff;
-    font-family:'Kanit';font-weight:600;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .step h2{font-size:18px;font-weight:500;}
-
-  .breeds{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;}
-  .breed{border:2px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;
-    background:#fff;transition:transform .12s,border-color .12s;text-align:center;}
-  .breed:hover{transform:translateY(-3px);}
-  .breed.sel{border-color:var(--mustard);box-shadow:0 6px 16px rgba(244,169,0,.22);}
-  .breed .photo{height:96px;background:var(--beige) center/cover no-repeat;display:flex;
-    align-items:center;justify-content:center;font-size:30px;color:#fff;}
-  .breed .name{font-size:13px;padding:8px 4px;font-weight:500;}
-  .breed .kg{font-size:11px;color:var(--muted);padding-bottom:8px;}
-
-  .field{margin-bottom:18px;}
-  .field label{display:block;font-size:14px;font-weight:500;margin-bottom:8px;}
-  .rangebox{display:flex;align-items:center;gap:14px;}
-  input[type=range]{flex:1;accent-color:var(--mustard);height:6px;}
-  .val{font-family:'Kanit';font-weight:600;font-size:20px;color:var(--terracotta);min-width:78px;text-align:right;}
-  select,input[type=number]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;
-    font-family:'Sarabun';font-size:15px;background:#fff;color:var(--choco);}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .chips{display:flex;gap:8px;flex-wrap:wrap;}
-  .chip{flex:1;min-width:90px;text-align:center;padding:10px;border:1px solid var(--line);border-radius:10px;
-    cursor:pointer;font-size:14px;background:#fff;transition:.12s;}
-  .chip.on{background:var(--mustard);color:#fff;border-color:var(--mustard);font-weight:500;}
-
-  .results{background:linear-gradient(135deg,#fff,#fdf7ec);}
-  .big{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px;}
-  .bigcard{background:var(--cream);border-radius:14px;padding:18px 20px;}
-  .bigcard .lbl{font-size:13px;color:var(--muted);margin-bottom:2px;}
-  .bigcard .v{font-family:'Kanit';font-weight:600;font-size:32px;color:var(--choco);}
-  .bigcard .v small{font-size:15px;font-weight:400;color:var(--muted);}
-  .bigcard.accent{background:var(--mustard);}
-  .bigcard.accent .lbl{color:#fff;opacity:.9;}
-  .bigcard.accent .v,.bigcard.accent .v small{color:#fff;}
-
-  h3.nt{font-size:15px;font-weight:500;margin:22px 0 12px;color:var(--terracotta);}
-  .nutri{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;}
-  .nrow{background:var(--cream);border-radius:10px;padding:10px 12px;}
-  .nrow .k{font-size:12px;color:var(--muted);}
-  .nrow .val2{font-family:'Kanit';font-weight:500;font-size:17px;}
-  .nrow .val2 small{font-size:11px;color:var(--muted);font-weight:400;}
-
-  .note{font-size:12.5px;color:var(--muted);margin-top:18px;padding:14px 16px;background:#f4ede1;
-    border-radius:12px;border-left:3px solid var(--terracotta);}
-  footer{text-align:center;font-size:12px;color:var(--muted);margin-top:28px;}
-
-  .recipe{border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px;background:#fffdf9;}
-  .rhead{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
-  .rico{font-size:26px;width:44px;height:44px;background:var(--cream);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .rname{font-family:'Kanit';font-weight:500;font-size:16px;}
-  .rtag{font-size:12.5px;color:var(--muted);}
-  .rsplit{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
-  .rlabel{font-size:12.5px;font-weight:600;color:var(--terracotta);margin-bottom:6px;font-family:'Kanit';}
-  .ring,.rsteps{font-size:13.5px;padding-left:18px;}
-  .ring li,.rsteps li{margin-bottom:4px;}
-  @media(max-width:560px){.rsplit{grid-template-columns:1fr;}.grid2{grid-template-columns:1fr;}.big{grid-template-columns:1fr;}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DoGFood — อาหารที่ดี สำหรับเพื่อนที่เรารัก</title>
+  <meta name="description" content="DoGFood อาหารสุนัขเกรดพรีเมียม โภชนาการครบถ้วน วัตถุดิบธรรมชาติ เหมาะสำหรับให้ทุกวัน">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600&family=Mitr:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <div class="paw">🐾</div>
-  <h1>น้องหมาของคุณต้องการอะไรบ้างในแต่ละวัน</h1>
-  <p>คำนวณพลังงานและสารอาหารที่ควรได้รับต่อวัน อ้างอิงมาตรฐานโภชนาการ NRC 2018 / FEDIAF เพื่อดูแลสมาชิกที่คุณรักอย่างมั่นใจ</p>
-</header>
 
-<div class="wrap">
-
-  <section>
-    <div class="step"><div class="n">1</div><h2>เลือกพันธุ์น้องหมา</h2></div>
-    <div class="breeds" id="breeds"></div>
-  </section>
-
-  <section>
-    <div class="step"><div class="n">2</div><h2>น้ำหนักและช่วงวัย</h2></div>
-    <div class="field">
-      <label>น้ำหนักตัว</label>
-      <div class="rangebox">
-        <input type="range" id="wt" min="1" max="50" step="0.5" value="10">
-        <span class="val" id="wtOut">10 กก.</span>
-      </div>
+  <!-- ===== NAV ===== -->
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="#top" class="nav__logo" aria-label="DoGFood หน้าแรก">
+        <span class="nav__logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M16 27c-4.5 0-9-2.6-9-7 0-3.2 2.6-5.3 4.6-7 .9-.8 1.5-2.2 2-3.4.6-1.4 1.4-2.6 2.4-2.6s1.8 1.2 2.4 2.6c.5 1.2 1.1 2.6 2 3.4 2 1.7 4.6 3.8 4.6 7 0 4.4-4.5 7-9 7Z" fill="currentColor"/><circle cx="6.5" cy="10.5" r="2.6" fill="currentColor"/><circle cx="25.5" cy="10.5" r="2.6" fill="currentColor"/><circle cx="11" cy="5.5" r="2.4" fill="currentColor"/><circle cx="21" cy="5.5" r="2.4" fill="currentColor"/></svg>
+        </span>
+        <span class="nav__logo-text">DoGFood</span>
+      </a>
+      <nav class="nav__links" id="navLinks" aria-label="เมนูหลัก">
+        <a href="#benefits">จุดเด่น</a>
+        <a href="#products">สินค้า</a>
+        <a href="#ingredients">วัตถุดิบ</a>
+        <a href="#reviews">รีวิว</a>
+        <a href="#faq">คำถามที่พบบ่อย</a>
+        <a href="#contact" class="nav__cta">สั่งซื้อผ่าน LINE</a>
+      </nav>
+      <button class="nav__burger" id="navBurger" aria-label="เปิดเมนู" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
     </div>
-    <div class="grid2">
-      <div class="field" style="margin-bottom:0">
-        <label>ช่วงวัย / ระดับกิจกรรม</label>
-        <select id="stage">
-          <option value="1.6">โตเต็มวัย · ทำหมันแล้ว</option>
-          <option value="1.8">โตเต็มวัย · ยังไม่ทำหมัน</option>
-          <option value="1.4">ไม่ค่อยขยับ / อยู่คอนโด</option>
-          <option value="2.0">แอคทีฟมาก / ออกกำลังบ่อย</option>
-          <option value="1.4">สูงวัย (7 ปีขึ้นไป)</option>
-          <option value="2.0">ลูกสุนัข 4–12 เดือน</option>
-          <option value="3.0">ลูกสุนัข ต่ำกว่า 4 เดือน</option>
-          <option value="1.0">อยู่ระหว่างลดน้ำหนัก</option>
-        </select>
-      </div>
-      <div class="field" style="margin-bottom:0">
-        <label>สภาพร่างกายตอนนี้</label>
-        <div class="chips" id="bcs">
-          <div class="chip" data-b="1.1">ผอมไป</div>
-          <div class="chip on" data-b="1.0">พอดี</div>
-          <div class="chip" data-b="0.9">ท้วม/อ้วน</div>
-        </div>
-      </div>
-    </div>
-  </section>
+  </header>
 
-  <section>
-    <div class="step"><div class="n">3</div><h2>ชนิดอาหารที่ให้</h2></div>
-    <div class="chips" id="foodtype">
-      <div class="chip on" data-d="350">อาหารเม็ด (350 kcal/100g)</div>
-      <div class="chip" data-d="150">อาหารปรุงสุก (150)</div>
-      <div class="chip" data-d="120">อาหารเปียก (120)</div>
-    </div>
-  </section>
+  <main id="top">
 
-  <section class="results">
-    <div class="step"><div class="n">✓</div><h2>ผลลัพธ์ต่อวัน</h2></div>
-    <div class="big">
-      <div class="bigcard accent">
-        <div class="lbl">พลังงานที่ต้องการ</div>
-        <div class="v"><span id="kcal">—</span> <small>kcal</small></div>
-      </div>
-      <div class="bigcard">
-        <div class="lbl">ปริมาณอาหารโดยประมาณ</div>
-        <div class="v"><span id="grams">—</span> <small>กรัม/วัน</small></div>
-      </div>
-    </div>
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <div class="hero__blob hero__blob--a" aria-hidden="true"></div>
+      <div class="hero__blob hero__blob--b" aria-hidden="true"></div>
 
-    <h3 class="nt">สารอาหารหลัก (Macronutrients)</h3>
-    <div class="nutri" id="macro"></div>
-
-    <h3 class="nt">แร่ธาตุและวิตามินสำคัญ (Micronutrients)</h3>
-    <div class="nutri" id="micro"></div>
-
-    <div class="note" id="capnote"></div>
-    <div class="note">
-      ⚠️ ค่าเหล่านี้เป็น<b>ค่าประมาณอ้างอิงมาตรฐานโภชนาการ</b> (NRC 2018 / FEDIAF) สำหรับสุนัขสุขภาพปกติ
-      ไม่ใช่คำวินิจฉัยหรือคำแนะนำจากสัตวแพทย์ สุนัขที่ป่วย ตั้งท้อง ให้นม หรือมีภาวะเฉพาะ
-      ควรปรึกษาสัตวแพทย์หรือนักโภชนาการสัตว์ก่อนปรับอาหาร
-    </div>
-  </section>
-
-  <section>
-    <div class="step"><div class="n">4</div><h2>เมนูอาหารทำเองที่บ้าน</h2></div>
-    <p style="font-size:14px;color:var(--muted);margin-bottom:18px">
-      3 สูตรตัวอย่างสำหรับเริ่มต้น ปรุงสุกทุกครั้ง ไม่ใส่เกลือ/เครื่องปรุง ใช้ปริมาณรวมต่อวันตาม “ปริมาณอาหารโดยประมาณ” ที่คำนวณไว้ด้านบน แล้วแบ่งเป็น 2 มื้อ
-    </p>
-
-    <div class="recipe">
-      <div class="rhead"><span class="rico">🍗</span><div><div class="rname">ไก่ & ข้าวกล้อง ฟักทอง</div><div class="rtag">ย่อยง่าย เหมาะกับหมาเริ่มกินอาหารทำเอง</div></div></div>
-      <div class="rsplit">
-        <div>
-          <div class="rlabel">วัตถุดิบ (สัดส่วนโดยปริมาตร)</div>
-          <ul class="ring">
-            <li>อกไก่ไม่มีหนัง 50%</li>
-            <li>ข้าวกล้องสุก 25%</li>
-            <li>ฟักทอง + แครอทนึ่ง 25%</li>
-            <li>น้ำมันปลา 1 ช้อนชา</li>
-            <li>ผงเปลือกไข่ / แคลเซียมเสริม (ตามสัตวแพทย์)</li>
+      <div class="hero__inner">
+        <div class="hero__copy">
+          <p class="eyebrow reveal">DoGFood · Premium Dog Nutrition</p>
+          <h1 class="hero__title">
+            <span class="hero__line reveal">อาหารที่ดี</span>
+            <span class="hero__line hero__line--accent reveal">สำหรับเพื่อน</span>
+            <span class="hero__line reveal">ที่เรารัก</span>
+          </h1>
+          <p class="hero__sub reveal">สูตรโภชนาการครบถ้วนจากวัตถุดิบธรรมชาติ<br>
+          คัดสรรทุกคำ เพื่อสุขภาพที่ดีของน้องหมาในทุก ๆ วัน</p>
+          <div class="hero__actions reveal">
+            <a href="#products" class="btn btn--primary">ดูสินค้าทั้งหมด</a>
+            <a href="#ingredients" class="btn btn--ghost">วัตถุดิบของเรา</a>
+          </div>
+          <ul class="hero__proof reveal" aria-label="ความน่าเชื่อถือ">
+            <li><strong>12,000+</strong><span>ครอบครัวที่ไว้ใจ</span></li>
+            <li><strong>100%</strong><span>วัตถุดิบธรรมชาติ</span></li>
+            <li><strong>4.9<span class="star" aria-hidden="true">★</span></strong><span>คะแนนรีวิวเฉลี่ย</span></li>
           </ul>
         </div>
-        <div>
-          <div class="rlabel">วิธีทำ</div>
-          <ol class="rsteps">
-            <li>ต้ม/นึ่งอกไก่จนสุกทั่ว หั่นหรือฉีกชิ้นเล็ก</li>
-            <li>หุงข้าวกล้องให้นุ่ม นึ่งฟักทองและแครอทจนนิ่ม</li>
-            <li>ปล่อยให้อุ่น คลุกทุกอย่างเข้ากัน</li>
-            <li>ราดน้ำมันปลา + โรยแคลเซียมก่อนเสิร์ฟ</li>
-          </ol>
+
+        <!-- 3D packaging -->
+        <div class="hero__visual reveal" aria-hidden="true">
+          <div class="stage" id="pouchStage">
+            <div class="pouch" id="pouch">
+              <div class="pouch__side"></div>
+              <div class="pouch__front">
+                <div class="pouch__seal"></div>
+                <div class="pouch__paw">
+                  <svg viewBox="0 0 32 32" fill="none"><path d="M16 27c-4.5 0-9-2.6-9-7 0-3.2 2.6-5.3 4.6-7 .9-.8 1.5-2.2 2-3.4.6-1.4 1.4-2.6 2.4-2.6s1.8 1.2 2.4 2.6c.5 1.2 1.1 2.6 2 3.4 2 1.7 4.6 3.8 4.6 7 0 4.4-4.5 7-9 7Z" fill="currentColor"/><circle cx="6.5" cy="10.5" r="2.6" fill="currentColor"/><circle cx="25.5" cy="10.5" r="2.6" fill="currentColor"/><circle cx="11" cy="5.5" r="2.4" fill="currentColor"/><circle cx="21" cy="5.5" r="2.4" fill="currentColor"/></svg>
+                </div>
+                <div class="pouch__brand">DoGFood</div>
+                <div class="pouch__flavor">สูตรไก่ &amp; ข้าวกล้อง</div>
+                <div class="pouch__badge">โภชนาการครบถ้วน</div>
+                <div class="pouch__weight">1.5 kg</div>
+              </div>
+            </div>
+            <span class="kibble kibble--1"></span>
+            <span class="kibble kibble--2"></span>
+            <span class="kibble kibble--3"></span>
+            <span class="kibble kibble--4"></span>
+            <div class="stage__shadow"></div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="recipe">
-      <div class="rhead"><span class="rico">🥩</span><div><div class="rname">เนื้อวัวบด & มันหวาน ถั่วแขก</div><div class="rtag">พลังงานสูง เหมาะกับหมาแอคทีฟ</div></div></div>
-      <div class="rsplit">
-        <div>
-          <div class="rlabel">วัตถุดิบ (สัดส่วนโดยปริมาตร)</div>
-          <ul class="ring">
-            <li>เนื้อวัวไม่ติดมันบด 50%</li>
-            <li>มันหวานนึ่ง 25%</li>
-            <li>ถั่วแขก + บรอกโคลีสับ 25%</li>
-            <li>น้ำมันปลา 1 ช้อนชา</li>
-            <li>ผงเปลือกไข่ / แคลเซียมเสริม (ตามสัตวแพทย์)</li>
+      <div class="ticker" aria-hidden="true">
+        <div class="ticker__track">
+          <span>โภชนาการครบถ้วน</span><i>●</i><span>วัตถุดิบธรรมชาติ</span><i>●</i><span>วิตามินและแร่ธาตุ</span><i>●</i><span>เหมาะสำหรับให้ทุกวัน</span><i>●</i>
+          <span>โภชนาการครบถ้วน</span><i>●</i><span>วัตถุดิบธรรมชาติ</span><i>●</i><span>วิตามินและแร่ธาตุ</span><i>●</i><span>เหมาะสำหรับให้ทุกวัน</span><i>●</i>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== BENEFITS ===== -->
+    <section class="section benefits" id="benefits">
+      <div class="container">
+        <p class="eyebrow reveal">ทำไมต้อง DoGFood</p>
+        <h2 class="section__title reveal">ทุกมื้อ คือการดูแล<br class="sm-only">ที่คิดมาแล้วอย่างดี</h2>
+        <div class="benefits__grid">
+          <article class="benefit reveal">
+            <div class="benefit__icon benefit__icon--green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.3 2.3 4.7-5"/></svg>
+            </div>
+            <h3>โภชนาการครบถ้วน</h3>
+            <p>สมดุลโปรตีน ไขมันดี และคาร์โบไฮเดรตตามหลักโภชนาการสัตวแพทย์ ครบทุกสารอาหารที่ร่างกายต้องการในหนึ่งมื้อ</p>
+          </article>
+          <article class="benefit reveal">
+            <div class="benefit__icon benefit__icon--orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-5 0-8-3-8-7 0-5 4-9 8-11 4 2 8 6 8 11 0 4-3 7-8 7Z"/><path d="M12 21V9"/><path d="M12 13c1.5-.6 2.8-1.8 3.4-3.2"/></svg>
+            </div>
+            <h3>วัตถุดิบธรรมชาติ</h3>
+            <p>เนื้อสัตว์แท้เป็นส่วนประกอบหลัก ไม่แต่งสี ไม่แต่งกลิ่น ไม่ใส่วัตถุกันเสียสังเคราะห์ อ่านฉลากแล้วเข้าใจได้ทุกบรรทัด</p>
+          </article>
+          <article class="benefit reveal">
+            <div class="benefit__icon benefit__icon--green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 7.5l14 9M19 7.5l-14 9"/><circle cx="12" cy="12" r="3.2"/></svg>
+            </div>
+            <h3>วิตามินและแร่ธาตุ</h3>
+            <p>เสริมวิตามินรวม โอเมก้า 3 &amp; 6 แคลเซียม และซิงก์ เพื่อขนเงางาม ข้อต่อแข็งแรง และภูมิคุ้มกันที่ดีในระยะยาว</p>
+          </article>
+          <article class="benefit reveal">
+            <div class="benefit__icon benefit__icon--orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>
+            </div>
+            <h3>เหมาะสำหรับให้ทุกวัน</h3>
+            <p>ย่อยง่าย ไม่เค็ม ไม่มัน พลังงานพอดีต่อวัน ให้ต่อเนื่องได้ทุกช่วงวัย พร้อมตารางปริมาณแนะนำข้างถุง</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PRODUCTS ===== -->
+    <section class="section section--tinted products" id="products">
+      <div class="container">
+        <p class="eyebrow reveal">สินค้าแนะนำ</p>
+        <h2 class="section__title reveal">เลือกสูตรที่ใช่<br class="sm-only">สำหรับน้องของคุณ</h2>
+        <div class="products__grid">
+
+          <article class="product reveal">
+            <div class="product__stage">
+              <span class="product__tag">ขายดีที่สุด</span>
+              <div class="mini-pouch mini-pouch--chicken">
+                <span class="mini-pouch__brand">DoGFood</span>
+                <span class="mini-pouch__name">ไก่ &amp; ข้าวกล้อง</span>
+              </div>
+            </div>
+            <h3>สูตรไก่ &amp; ข้าวกล้อง</h3>
+            <p>โปรตีนไก่แท้ 42% ย่อยง่าย เหมาะกับสุนัขโตทุกสายพันธุ์ที่กินอาหารเม็ดเป็นประจำ</p>
+            <div class="product__meta">
+              <span class="product__price">฿590 <small>/ 1.5 kg</small></span>
+              <a href="#contact" class="btn btn--small">สั่งซื้อ</a>
+            </div>
+          </article>
+
+          <article class="product reveal">
+            <div class="product__stage">
+              <span class="product__tag product__tag--green">ผิวแพ้ง่าย</span>
+              <div class="mini-pouch mini-pouch--salmon">
+                <span class="mini-pouch__brand">DoGFood</span>
+                <span class="mini-pouch__name">แซลมอน &amp; มันหวาน</span>
+              </div>
+            </div>
+            <h3>สูตรแซลมอน &amp; มันหวาน</h3>
+            <p>โอเมก้า 3 สูงจากแซลมอนแท้ ช่วยบำรุงขนและผิวหนัง เหมาะกับน้องที่แพ้โปรตีนไก่</p>
+            <div class="product__meta">
+              <span class="product__price">฿690 <small>/ 1.5 kg</small></span>
+              <a href="#contact" class="btn btn--small">สั่งซื้อ</a>
+            </div>
+          </article>
+
+          <article class="product reveal">
+            <div class="product__stage">
+              <span class="product__tag product__tag--soft">ลูกสุนัข</span>
+              <div class="mini-pouch mini-pouch--puppy">
+                <span class="mini-pouch__brand">DoGFood</span>
+                <span class="mini-pouch__name">Puppy สูตรเจริญเติบโต</span>
+              </div>
+            </div>
+            <h3>Puppy สูตรเจริญเติบโต</h3>
+            <p>เม็ดเล็กพิเศษ เสริม DHA และแคลเซียม สำหรับลูกสุนัขอายุ 2–12 เดือนโดยเฉพาะ</p>
+            <div class="product__meta">
+              <span class="product__price">฿640 <small>/ 1.2 kg</small></span>
+              <a href="#contact" class="btn btn--small">สั่งซื้อ</a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== INGREDIENTS ===== -->
+    <section class="section ingredients" id="ingredients">
+      <div class="container ingredients__inner">
+        <div class="ingredients__visual reveal" aria-hidden="true">
+          <div class="ingredients__blob">
+            <svg viewBox="0 0 200 200" class="ingredients__art">
+              <!-- bowl -->
+              <path d="M40 118h120c0 28-24 46-60 46s-60-18-60-46Z" fill="#E8DFC9"/>
+              <path d="M34 110h132v10c0 4-3 7-7 7H41c-4 0-7-3-7-7v-10Z" fill="#5F7F5A"/>
+              <!-- kibbles -->
+              <circle cx="70" cy="102" r="9" fill="#B9793F"/>
+              <circle cx="92" cy="96" r="10" fill="#A56A34"/>
+              <circle cx="115" cy="101" r="9" fill="#C08347"/>
+              <circle cx="134" cy="105" r="7" fill="#B9793F"/>
+              <!-- carrot -->
+              <path d="M148 62c8 4 12 12 10 20l-16-6c0-6 2-11 6-14Z" fill="#EF8A3C"/>
+              <path d="M150 58c2-6 8-9 13-8-1 5-5 9-10 10l-3-2Z" fill="#5F7F5A"/>
+              <!-- leaf -->
+              <path d="M46 66c10-8 22-8 28 0-8 8-20 8-28 0Z" fill="#7FA179"/>
+              <path d="M46 66c10 0 20 0 28 0" stroke="#5F7F5A" stroke-width="2"/>
+              <!-- drumstick -->
+              <path d="M84 46c10-10 26-8 32 2 5 9 1 21-9 25-8 3-17 1-22-5l-1-22Z" fill="#F0E4CE"/>
+              <circle cx="76" cy="70" r="6" fill="#FBF7ED" stroke="#D9CBA8" stroke-width="2"/>
+              <circle cx="70" cy="62" r="6" fill="#FBF7ED" stroke="#D9CBA8" stroke-width="2"/>
+            </svg>
+          </div>
+          <span class="ingredients__float ingredients__float--1"></span>
+          <span class="ingredients__float ingredients__float--2"></span>
+        </div>
+
+        <div class="ingredients__copy">
+          <p class="eyebrow reveal">วัตถุดิบภายในถุง</p>
+          <h2 class="section__title reveal">รู้ว่าน้องกินอะไร<br>ในทุก ๆ คำ</h2>
+          <p class="ingredients__lead reveal">เราเชื่อว่าอาหารที่ดีเริ่มจากวัตถุดิบที่โปร่งใส สัดส่วนด้านล่างคือส่วนประกอบจริงของสูตรไก่ &amp; ข้าวกล้อง</p>
+
+          <ul class="ing-list">
+            <li class="reveal">
+              <div class="ing-list__head"><span>เนื้อไก่แท้</span><strong>42%</strong></div>
+              <div class="ing-bar"><span class="ing-bar__fill" style="--w:42%"></span></div>
+            </li>
+            <li class="reveal">
+              <div class="ing-list__head"><span>ข้าวกล้อง &amp; ธัญพืชเต็มเมล็ด</span><strong>24%</strong></div>
+              <div class="ing-bar"><span class="ing-bar__fill" style="--w:24%"></span></div>
+            </li>
+            <li class="reveal">
+              <div class="ing-list__head"><span>ผักและผลไม้ (แครอท ฟักทอง แอปเปิล)</span><strong>18%</strong></div>
+              <div class="ing-bar"><span class="ing-bar__fill" style="--w:18%"></span></div>
+            </li>
+            <li class="reveal">
+              <div class="ing-list__head"><span>น้ำมันปลา &amp; ไขมันดี</span><strong>9%</strong></div>
+              <div class="ing-bar"><span class="ing-bar__fill" style="--w:9%"></span></div>
+            </li>
+            <li class="reveal">
+              <div class="ing-list__head"><span>วิตามินรวมและแร่ธาตุ</span><strong>7%</strong></div>
+              <div class="ing-bar"><span class="ing-bar__fill" style="--w:7%"></span></div>
+            </li>
           </ul>
-        </div>
-        <div>
-          <div class="rlabel">วิธีทำ</div>
-          <ol class="rsteps">
-            <li>ผัดเนื้อบดในกระทะไม่ใส่น้ำมัน จนสุกไม่มีสีชมพู ซับมันส่วนเกิน</li>
-            <li>นึ่งมันหวาน ถั่วแขก และบรอกโคลีจนนิ่ม หั่นชิ้นเล็ก</li>
-            <li>คลุกรวมกันตอนอุ่น</li>
-            <li>ราดน้ำมันปลา + โรยแคลเซียมก่อนเสิร์ฟ</li>
-          </ol>
+
+          <p class="ingredients__note reveal">ไม่มีสีสังเคราะห์ · ไม่มีกลิ่นแต่ง · ไม่มีวัตถุกันเสียสังเคราะห์</p>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="recipe">
-      <div class="rhead"><span class="rico">🐟</span><div><div class="rname">ปลา & ข้าว ผักโขม</div><div class="rtag">โอเมกา-3 สูง ดีต่อผิวหนังและขน</div></div></div>
-      <div class="rsplit">
-        <div>
-          <div class="rlabel">วัตถุดิบ (สัดส่วนโดยปริมาตร)</div>
-          <ul class="ring">
-            <li>ปลาแซลมอน/ปลาขาว เอาก้างออก 50%</li>
-            <li>ข้าวสวย/มันฝรั่งนึ่ง 25%</li>
-            <li>ผักโขม + ฟักทองนึ่ง 25%</li>
-            <li>น้ำมันมะกอก 1 ช้อนชา</li>
-            <li>ผงเปลือกไข่ / แคลเซียมเสริม (ตามสัตวแพทย์)</li>
-          </ul>
-        </div>
-        <div>
-          <div class="rlabel">วิธีทำ</div>
-          <ol class="rsteps">
-            <li>นึ่งหรือย่างปลาจนสุก ตรวจก้างออกให้หมด</li>
-            <li>หุงข้าวหรือนึ่งมันฝรั่ง นึ่งผักจนนิ่ม</li>
-            <li>แกะปลาเป็นชิ้นเล็ก คลุกรวมตอนอุ่น</li>
-            <li>ราดน้ำมัน + โรยแคลเซียมก่อนเสิร์ฟ</li>
-          </ol>
+    <!-- ===== TESTIMONIALS ===== -->
+    <section class="section section--tinted reviews" id="reviews">
+      <div class="container">
+        <p class="eyebrow reveal">เสียงจากครอบครัวจริง</p>
+        <h2 class="section__title reveal">พวกเขาไว้ใจให้เราดูแล<br class="sm-only">มื้ออาหารของเพื่อนรัก</h2>
+        <div class="reviews__grid">
+          <figure class="review reveal">
+            <div class="review__stars" aria-label="5 ดาว">★★★★★</div>
+            <blockquote>“เปลี่ยนมาให้ DoGFood ได้สองเดือน ขนโกโก้เงาขึ้นชัดมาก อึเป็นก้อนสวย ไม่เหม็นเหมือนเมื่อก่อนเลยค่ะ”</blockquote>
+            <figcaption>
+              <span class="review__avatar" aria-hidden="true">ก</span>
+              <div><strong>คุณแก้ม</strong><span>เจ้าของน้องโกโก้ · โกลเด้น รีทรีฟเวอร์</span></div>
+            </figcaption>
+          </figure>
+          <figure class="review reveal">
+            <div class="review__stars" aria-label="5 ดาว">★★★★★</div>
+            <blockquote>“ลาเต้เป็นหมาเลือกกินตัวแม่ แต่สูตรแซลมอนถุงนี้คือเทหมดชาม แถมผิวที่เคยคันก็ดีขึ้นด้วยครับ”</blockquote>
+            <figcaption>
+              <span class="review__avatar review__avatar--orange" aria-hidden="true">บ</span>
+              <div><strong>คุณบอส</strong><span>เจ้าของน้องลาเต้ · ปอมเมอเรเนียน</span></div>
+            </figcaption>
+          </figure>
+          <figure class="review reveal">
+            <div class="review__stars" aria-label="5 ดาว">★★★★★</div>
+            <blockquote>“สั่งผ่าน LINE ง่ายมาก แอดมินช่วยคำนวณปริมาณให้ตามน้ำหนักตัวน้องด้วย รู้สึกเหมือนมีที่ปรึกษาส่วนตัวเลยค่ะ”</blockquote>
+            <figcaption>
+              <span class="review__avatar" aria-hidden="true">พ</span>
+              <div><strong>คุณพลอย</strong><span>เจ้าของน้องหมูเด้ง · บีเกิล</span></div>
+            </figcaption>
+          </figure>
         </div>
       </div>
+    </section>
+
+    <!-- ===== FAQ ===== -->
+    <section class="section faq" id="faq">
+      <div class="container container--narrow">
+        <p class="eyebrow reveal">คำถามที่พบบ่อย</p>
+        <h2 class="section__title reveal">อยากรู้อะไร ถามได้เลย</h2>
+        <div class="faq__list reveal">
+
+          <details class="faq__item">
+            <summary>DoGFood เหมาะกับสุนัขพันธุ์ไหนบ้าง?</summary>
+            <div class="faq__body"><p>สูตรสุนัขโตของเราออกแบบมาสำหรับทุกสายพันธุ์และทุกขนาดตัว ส่วนลูกสุนัขอายุ 2–12 เดือน แนะนำสูตร Puppy ซึ่งมีเม็ดเล็กกว่าและพลังงานสูงกว่าเพื่อการเจริญเติบโต</p></div>
+          </details>
+
+          <details class="faq__item">
+            <summary>ควรให้อาหารปริมาณเท่าไหร่ต่อวัน?</summary>
+            <div class="faq__body"><p>ปริมาณขึ้นอยู่กับน้ำหนักตัวและกิจกรรมของน้อง ข้างถุงมีตารางแนะนำอย่างละเอียด หรือทักแชท LINE พร้อมแจ้งน้ำหนักตัวน้อง แอดมินจะช่วยคำนวณให้ฟรี</p></div>
+          </details>
+
+          <details class="faq__item">
+            <summary>เปลี่ยนจากอาหารยี่ห้อเดิมมาเป็น DoGFood อย่างไร?</summary>
+            <div class="faq__body"><p>แนะนำให้ค่อย ๆ ผสมภายใน 7 วัน เริ่มจาก DoGFood 25% ผสมอาหารเดิม 75% แล้วเพิ่มสัดส่วนขึ้นทุก 2 วัน เพื่อให้ระบบย่อยอาหารปรับตัวได้โดยไม่ท้องเสีย</p></div>
+          </details>
+
+          <details class="faq__item">
+            <summary>อาหารเก็บได้นานแค่ไหนหลังเปิดถุง?</summary>
+            <div class="faq__body"><p>ถุงของเรามีซิปล็อกในตัว หลังเปิดควรใช้ให้หมดภายใน 6 สัปดาห์ เก็บในที่แห้ง พ้นแสงแดด และปิดซิปให้สนิททุกครั้งเพื่อคงความหอมและคุณค่าอาหาร</p></div>
+          </details>
+
+          <details class="faq__item">
+            <summary>มีบริการจัดส่งอย่างไร?</summary>
+            <div class="faq__body"><p>จัดส่งทั่วประเทศภายใน 1–3 วันทำการ สั่งครบ ฿1,000 ส่งฟรีทันที และมีระบบสั่งซื้อแบบรายเดือน (Subscription) ลดเพิ่ม 10% สำหรับลูกค้าประจำ</p></div>
+          </details>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONTACT / LINE CTA ===== -->
+    <section class="section contact" id="contact">
+      <div class="container">
+        <div class="contact__panel reveal">
+          <div class="contact__blob" aria-hidden="true"></div>
+          <div class="contact__copy">
+            <h2>พร้อมให้มื้อที่ดีที่สุด<br>กับเพื่อนของคุณแล้วหรือยัง?</h2>
+            <p>ทักแชทมาคุยกับเราได้เลย — ทีมงานพร้อมช่วยเลือกสูตร คำนวณปริมาณ และตอบทุกคำถามเรื่องโภชนาการของน้อง</p>
+            <div class="contact__actions">
+              <a href="https://line.me/R/ti/p/@dogfood" class="btn btn--line" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5C6.2 2.5 1.5 6.4 1.5 11.2c0 4.3 3.7 7.9 8.8 8.6.34.07.8.23.92.52.1.27.07.68.03.95l-.14.9c-.05.27-.21 1.06.93.58 1.13-.48 6.12-3.6 8.35-6.17 1.54-1.69 2.11-3.4 2.11-5.34 0-4.8-4.7-8.7-10.5-8.7Zm-4.4 11.4H5.5a.55.55 0 0 1-.55-.55V9.1a.55.55 0 1 1 1.1 0v3.7h1.55a.55.55 0 1 1 0 1.1Zm2.1-.55a.55.55 0 1 1-1.1 0V9.1a.55.55 0 1 1 1.1 0v4.25Zm5.1 0a.55.55 0 0 1-.99.33l-2.16-2.94v2.61a.55.55 0 1 1-1.1 0V9.1a.55.55 0 0 1 .99-.33l2.16 2.94V9.1a.55.55 0 1 1 1.1 0v4.25Zm3.7-2.68a.55.55 0 1 1 0 1.1h-1.55v1.03h1.55a.55.55 0 1 1 0 1.1h-2.1a.55.55 0 0 1-.55-.55V9.1c0-.3.25-.55.55-.55h2.1a.55.55 0 1 1 0 1.1h-1.55v1.02h1.55Z"/></svg>
+                แอดไลน์ @dogfood
+              </a>
+              <a href="tel:+6620001234" class="btn btn--ghost btn--ghost-light">โทร 02-000-1234</a>
+            </div>
+            <ul class="contact__info">
+              <li>เปิดทุกวัน 9:00–20:00 น.</li>
+              <li>hello@dogfood.co.th</li>
+              <li>จัดส่งทั่วประเทศ · สั่งครบ ฿1,000 ส่งฟรี</li>
+            </ul>
+          </div>
+          <div class="contact__visual" aria-hidden="true">
+            <div class="contact__pouch">
+              <div class="contact__pouch-paw">
+                <svg viewBox="0 0 32 32" fill="none"><path d="M16 27c-4.5 0-9-2.6-9-7 0-3.2 2.6-5.3 4.6-7 .9-.8 1.5-2.2 2-3.4.6-1.4 1.4-2.6 2.4-2.6s1.8 1.2 2.4 2.6c.5 1.2 1.1 2.6 2 3.4 2 1.7 4.6 3.8 4.6 7 0 4.4-4.5 7-9 7Z" fill="currentColor"/><circle cx="6.5" cy="10.5" r="2.6" fill="currentColor"/><circle cx="25.5" cy="10.5" r="2.6" fill="currentColor"/><circle cx="11" cy="5.5" r="2.4" fill="currentColor"/><circle cx="21" cy="5.5" r="2.4" fill="currentColor"/></svg>
+              </div>
+              <span>DoGFood</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <span class="footer__logo">DoGFood</span>
+        <p>อาหารที่ดี สำหรับเพื่อนที่เรารัก</p>
+      </div>
+      <nav class="footer__links" aria-label="ลิงก์ท้ายหน้า">
+        <a href="#benefits">จุดเด่น</a>
+        <a href="#products">สินค้า</a>
+        <a href="#ingredients">วัตถุดิบ</a>
+        <a href="#faq">คำถามที่พบบ่อย</a>
+        <a href="#contact">ติดต่อเรา</a>
+      </nav>
+      <p class="footer__copyright">© 2026 DoGFood Co., Ltd. — Made with care in Thailand</p>
     </div>
+  </footer>
 
-    <div style="background:#f4ede1;border-radius:12px;padding:16px 18px;margin-top:6px">
-      <div style="font-family:'Kanit';font-weight:500;color:var(--terracotta);margin-bottom:6px">📐 หลักจัดจานให้สมดุล</div>
-      <div style="font-size:13.5px">โปรตีน ~50% · คาร์บย่อยง่าย ~25% · ผัก ~25% + ไขมันดี (น้ำมันปลา/มะกอก) + <b>แหล่งแคลเซียม</b> ทุกมื้อ เพราะเนื้อล้วนมีแคลเซียมน้อยมาก และควรมีวิตามิน–แร่ธาตุรวมสำหรับสุนัขเพื่อให้ครบถ้วน</div>
-    </div>
-
-    <div style="background:#fbe9e9;border-radius:12px;padding:16px 18px;margin-top:12px;border-left:3px solid #c0392b">
-      <div style="font-family:'Kanit';font-weight:500;color:#c0392b;margin-bottom:6px">🚫 ห้ามใส่เด็ดขาด (เป็นพิษต่อสุนัข)</div>
-      <div style="font-size:13.5px">หัวหอม · กระเทียม · ต้นหอม · องุ่น/ลูกเกด · ช็อกโกแลต · คาเฟอีน · อะโวคาโด · แมคคาเดเมีย · ไซลิทอล (สารให้ความหวาน) · แอลกอฮอล์ · กระดูกที่ปรุงสุก (แตกเป็นเสี้ยน)</div>
-    </div>
-
-    <div class="note">
-      ⚠️ <b>สำคัญมาก:</b> งานวิจัยของ UC Davis พบว่าสูตรอาหารหมาทำเองที่แชร์กันออนไลน์ผ่านมาตรฐานโภชนาการครบถ้วนเพียง ~5% เท่านั้น ส่วนใหญ่ขาดแคลเซียม กรดไขมันจำเป็น และแร่ธาตุอย่างสังกะสี–ทองแดง
-      สูตรข้างต้นเป็น<b>ตัวอย่างเริ่มต้น</b> ไม่ใช่สูตรที่สมดุลครบถ้วนสมบูรณ์ หากใช้เป็นอาหารหลักระยะยาว ควรให้สัตวแพทย์หรือนักโภชนาการสัตว์ปรับสูตรและกำหนดปริมาณแคลเซียม/วิตามินเสริมให้เหมาะกับน้องหมาแต่ละตัว
-    </div>
-  </section>
-
-  <footer>สร้างเพื่อทดสอบแนวคิดผลิตภัณฑ์ · ปรับแต่งโลโก้ สี และรูปได้ตามแบรนด์</footer>
-</div>
-
-<script>
-const breeds=[
-  {n:"ปอมเมอเรเนียน",kg:2.5,api:"pomeranian"},
-  {n:"ชิวาวา",kg:2.5,api:"chihuahua"},
-  {n:"พุดเดิ้ลทอย",kg:3.5,api:"poodle/toy"},
-  {n:"ชิห์สุ",kg:5.5,api:"shihtzu"},
-  {n:"ปั๊ก",kg:7,api:"pug"},
-  {n:"ดัชชุน",kg:8,api:"dachshund"},
-  {n:"บีเกิล",kg:10,api:"beagle"},
-  {n:"เฟรนช์บูลด็อก",kg:11,api:"bulldog/french"},
-  {n:"ฮัสกี้",kg:21,api:"husky"},
-  {n:"โกลเด้น",kg:30,api:"retriever/golden"},
-  {n:"อื่นๆ / พันทาง",kg:10,api:""}
-];
-
-const NRC={
-  protein:25, fat:13.8, linoleic:2.8, epadha:0.11,
-  ca:1.0, p:0.75, na:0.2, k:1.0, mg:150, fe:7.5, zn:15, cu:1.5,
-  vitA:1263, vitD:136, vitE:7.5
-};
-
-let sel=0, bcs=1.0, density=350;
-
-const wrap=document.getElementById("breeds");
-breeds.forEach((b,i)=>{
-  const c=document.createElement("div");
-  c.className="breed"+(i===0?" sel":"");
-  c.innerHTML=`<div class="photo" id="ph${i}">🐶</div><div class="name">${b.n}</div><div class="kg">≈ ${b.kg} กก.</div>`;
-  c.onclick=()=>{sel=i;document.querySelectorAll(".breed").forEach(x=>x.classList.remove("sel"));
-    c.classList.add("sel");document.getElementById("wt").value=b.kg;calc();};
-  wrap.appendChild(c);
-  const url=b.api?`https://dog.ceo/api/breed/${b.api}/images/random`:`https://dog.ceo/api/breeds/image/random`;
-  fetch(url).then(r=>r.json()).then(d=>{if(d.message){const p=document.getElementById("ph"+i);
-    p.style.backgroundImage=`url(${d.message})`;p.textContent="";}}).catch(()=>{});
-});
-
-document.getElementById("bcs").onclick=e=>{const t=e.target.closest(".chip");if(!t)return;
-  document.querySelectorAll("#bcs .chip").forEach(x=>x.classList.remove("on"));t.classList.add("on");
-  bcs=parseFloat(t.dataset.b);calc();};
-document.getElementById("foodtype").onclick=e=>{const t=e.target.closest(".chip");if(!t)return;
-  document.querySelectorAll("#foodtype .chip").forEach(x=>x.classList.remove("on"));t.classList.add("on");
-  density=parseFloat(t.dataset.d);calc();};
-document.getElementById("wt").addEventListener("input",calc);
-document.getElementById("stage").addEventListener("change",calc);
-
-function row(k,v,u){return `<div class="nrow"><div class="k">${k}</div><div class="val2">${v} <small>${u}</small></div></div>`;}
-function r2(x){return Math.round(x*100)/100;}
-function r1(x){return Math.round(x*10)/10;}
-
-function calc(){
-  const kg=parseFloat(document.getElementById("wt").value);
-  const f=parseFloat(document.getElementById("stage").value);
-  document.getElementById("wtOut").textContent=kg+" กก.";
-  const rer=70*Math.pow(kg,0.75);
-  const mer=rer*f*bcs;
-  const k=mer/1000;
-  document.getElementById("kcal").textContent=Math.round(mer).toLocaleString();
-  document.getElementById("grams").textContent=Math.round(mer/(density/100)).toLocaleString();
-
-  document.getElementById("macro").innerHTML=
-    row("โปรตีน",Math.round(NRC.protein*k),"ก.")+
-    row("ไขมัน (อย่างน้อย)",r1(NRC.fat*k),"ก.")+
-    row("กรดไลโนเลอิก (โอเมกา-6)",r2(NRC.linoleic*k),"ก.")+
-    row("EPA + DHA (โอเมกา-3)",Math.round(NRC.epadha*k*1000),"มก.");
-
-  document.getElementById("micro").innerHTML=
-    row("แคลเซียม",r2(NRC.ca*k),"ก.")+
-    row("ฟอสฟอรัส",r2(NRC.p*k),"ก.")+
-    row("โพแทสเซียม",r2(NRC.k*k),"ก.")+
-    row("โซเดียม",Math.round(NRC.na*k*1000),"มก.")+
-    row("แมกนีเซียม",Math.round(NRC.mg*k),"มก.")+
-    row("ธาตุเหล็ก",r1(NRC.fe*k),"มก.")+
-    row("สังกะสี",r1(NRC.zn*k),"มก.")+
-    row("ทองแดง",r2(NRC.cu*k),"มก.")+
-    row("วิตามิน A",Math.round(NRC.vitA*k),"IU")+
-    row("วิตามิน D",Math.round(NRC.vitD*k),"IU")+
-    row("วิตามิน E",r1(NRC.vitE*k),"มก.");
-
-  const ratio=r1((NRC.ca*k)/(NRC.p*k));
-  document.getElementById("capnote").innerHTML=
-    `💡 สัดส่วนแคลเซียม : ฟอสฟอรัส ที่เหมาะสมสำหรับสุนัขโตคือประมาณ <b>1.2 – 1.4 : 1</b> (ค่าจากตารางนี้ ≈ ${ratio} : 1) ซึ่งเป็นตัวชี้วัดสำคัญของอาหารที่สมดุล`;
-}
-calc();
-</script>
+  <script src="script.js"></script>
 </body>
 </html>
