@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>คำนวณปริมาณอาหาร — DoGFood</title>
+  <meta name="description" content="คำนวณปริมาณอาหาร DoGFood ที่เหมาะสมต่อวัน ตามน้ำหนัก ช่วงวัย และระดับกิจกรรมของน้องหมา">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600&family=Mitr:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== NAV ===== -->
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo" aria-label="DoGFood หน้าแรก">
+        <span class="nav__logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M16 27c-4.5 0-9-2.6-9-7 0-3.2 2.6-5.3 4.6-7 .9-.8 1.5-2.2 2-3.4.6-1.4 1.4-2.6 2.4-2.6s1.8 1.2 2.4 2.6c.5 1.2 1.1 2.6 2 3.4 2 1.7 4.6 3.8 4.6 7 0 4.4-4.5 7-9 7Z" fill="currentColor"/><circle cx="6.5" cy="10.5" r="2.6" fill="currentColor"/><circle cx="25.5" cy="10.5" r="2.6" fill="currentColor"/><circle cx="11" cy="5.5" r="2.4" fill="currentColor"/><circle cx="21" cy="5.5" r="2.4" fill="currentColor"/></svg>
+        </span>
+        <span class="nav__logo-text">DoGFood</span>
+      </a>
+      <nav class="nav__links" id="navLinks" aria-label="เมนูหลัก">
+        <a href="index.html#benefits">จุดเด่น</a>
+        <a href="index.html#products">สินค้า</a>
+        <a href="index.html#ingredients">วัตถุดิบ</a>
+        <a href="calculator.html" class="is-active" aria-current="page">คำนวณอาหาร</a>
+        <a href="index.html#faq">คำถามที่พบบ่อย</a>
+        <a href="index.html#contact" class="nav__cta">สั่งซื้อผ่าน LINE</a>
+      </nav>
+      <button class="nav__burger" id="navBurger" aria-label="เปิดเมนู" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ===== CALC HERO ===== -->
+    <section class="calc-hero">
+      <div class="hero__blob hero__blob--a" aria-hidden="true"></div>
+      <div class="hero__blob hero__blob--b" aria-hidden="true"></div>
+      <div class="container calc-hero__inner">
+        <p class="eyebrow reveal">เครื่องมือช่วยคุณพ่อคุณแม่</p>
+        <h1 class="calc-hero__title reveal">น้องควรกินวันละเท่าไหร่?<br>คำนวณให้ใน 10 วินาที</h1>
+        <p class="calc-hero__sub reveal">กรอกน้ำหนัก ช่วงวัย และระดับกิจกรรมของน้อง<br class="sm-only">
+        เราจะคำนวณปริมาณอาหาร DoGFood ที่เหมาะสมต่อวันให้ทันที</p>
+      </div>
+    </section>
+
+    <!-- ===== CALCULATOR ===== -->
+    <section class="section calc" id="calculator">
+      <div class="container calc__inner">
+
+        <!-- Form card -->
+        <form class="calc-card reveal" id="calcForm" novalidate>
+          <h2 class="calc-card__title">ข้อมูลของน้อง</h2>
+
+          <div class="field">
+            <label for="dogName">ชื่อน้อง <small>(ไม่บังคับ)</small></label>
+            <input type="text" id="dogName" name="dogName" placeholder="เช่น โกโก้" autocomplete="off" maxlength="30">
+          </div>
+
+          <div class="field">
+            <label for="weight">น้ำหนักตัว (กิโลกรัม)</label>
+            <input type="number" id="weight" name="weight" inputmode="decimal" min="0.5" max="90" step="0.1" placeholder="เช่น 12.5" required>
+            <p class="field__error" id="weightError" hidden>กรุณากรอกน้ำหนัก 0.5–90 กก.</p>
+          </div>
+
+          <div class="field">
+            <span class="field__label" id="stageLabel">ช่วงวัย</span>
+            <div class="chip-group" role="radiogroup" aria-labelledby="stageLabel">
+              <label class="chip"><input type="radio" name="stage" value="puppy-young"><span>ลูกสุนัข 2–4 เดือน</span></label>
+              <label class="chip"><input type="radio" name="stage" value="puppy"><span>ลูกสุนัข 4–12 เดือน</span></label>
+              <label class="chip"><input type="radio" name="stage" value="adult" checked><span>โตเต็มวัย (1–7 ปี)</span></label>
+              <label class="chip"><input type="radio" name="stage" value="senior"><span>สูงวัย (7 ปีขึ้นไป)</span></label>
+            </div>
+          </div>
+
+          <div class="field" id="neuterField">
+            <span class="field__label" id="neuterLabel">ทำหมันแล้วหรือยัง</span>
+            <div class="chip-group" role="radiogroup" aria-labelledby="neuterLabel">
+              <label class="chip"><input type="radio" name="neuter" value="yes" checked><span>ทำหมันแล้ว</span></label>
+              <label class="chip"><input type="radio" name="neuter" value="no"><span>ยังไม่ทำหมัน</span></label>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field__label" id="activityLabel">ระดับกิจกรรมต่อวัน</span>
+            <div class="chip-group" role="radiogroup" aria-labelledby="activityLabel">
+              <label class="chip"><input type="radio" name="activity" value="low"><span>ชิลล์ ๆ ในบ้าน</span></label>
+              <label class="chip"><input type="radio" name="activity" value="normal" checked><span>เดินเล่นทุกวัน</span></label>
+              <label class="chip"><input type="radio" name="activity" value="high"><span>ซนมาก / ออกกำลังหนัก</span></label>
+            </div>
+          </div>
+
+          <div class="field">
+            <span class="field__label" id="modeLabel">ประเภทอาหาร</span>
+            <div class="mode-toggle" role="radiogroup" aria-labelledby="modeLabel">
+              <label class="mode-toggle__opt">
+                <input type="radio" name="mode" value="preset" checked>
+                <span>อาหารเม็ด DoGFood</span>
+              </label>
+              <label class="mode-toggle__opt">
+                <input type="radio" name="mode" value="custom">
+                <span>ปรุงเอง (เลือกวัตถุดิบ)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- preset formulas -->
+          <div class="field" id="presetField">
+            <span class="field__label" id="formulaLabel">สูตรอาหารที่ให้</span>
+            <div class="chip-group" role="radiogroup" aria-labelledby="formulaLabel">
+              <label class="chip"><input type="radio" name="formula" value="chicken" checked><span>ไก่ &amp; ข้าวกล้อง</span></label>
+              <label class="chip"><input type="radio" name="formula" value="salmon"><span>แซลมอน &amp; มันหวาน</span></label>
+              <label class="chip"><input type="radio" name="formula" value="puppy"><span>Puppy สูตรเจริญเติบโต</span></label>
+            </div>
+          </div>
+
+          <!-- custom recipe builder -->
+          <div class="custom-builder" id="customBuilder" hidden>
+            <div class="field">
+              <span class="field__label field__label--cat" id="meatLabel"><i class="cat-dot cat-dot--meat" aria-hidden="true"></i>เนื้อสัตว์</span>
+              <div class="chip-group" role="radiogroup" aria-labelledby="meatLabel">
+                <label class="chip"><input type="radio" name="meat" value="chicken" checked><span>ไก่</span></label>
+                <label class="chip"><input type="radio" name="meat" value="pork"><span>หมู</span></label>
+                <label class="chip"><input type="radio" name="meat" value="beef"><span>เนื้อวัว</span></label>
+                <label class="chip"><input type="radio" name="meat" value="salmon"><span>ปลาแซลมอน</span></label>
+              </div>
+            </div>
+            <div class="field">
+              <span class="field__label field__label--cat" id="riceLabel"><i class="cat-dot cat-dot--rice" aria-hidden="true"></i>ข้าว</span>
+              <div class="chip-group" role="radiogroup" aria-labelledby="riceLabel">
+                <label class="chip"><input type="radio" name="rice" value="white" checked><span>ข้าวขาว</span></label>
+                <label class="chip"><input type="radio" name="rice" value="brown"><span>ข้าวกล้อง</span></label>
+                <label class="chip"><input type="radio" name="rice" value="riceberry"><span>ข้าวไรซ์เบอร์รี่</span></label>
+              </div>
+            </div>
+            <div class="field">
+              <span class="field__label field__label--cat" id="vegLabel"><i class="cat-dot cat-dot--veg" aria-hidden="true"></i>ผัก</span>
+              <div class="chip-group" role="radiogroup" aria-labelledby="vegLabel">
+                <label class="chip"><input type="radio" name="veg" value="pea" checked><span>ถั่วลันเตา</span></label>
+                <label class="chip"><input type="radio" name="veg" value="pumpkin"><span>ฟักทอง</span></label>
+                <label class="chip"><input type="radio" name="veg" value="tomato"><span>มะเขือเทศ</span></label>
+                <label class="chip"><input type="radio" name="veg" value="corn"><span>ข้าวโพด</span></label>
+                <label class="chip"><input type="radio" name="veg" value="carrot"><span>แครอท</span></label>
+                <label class="chip"><input type="radio" name="veg" value="cucumber"><span>แตงกวา</span></label>
+              </div>
+            </div>
+            <div class="field">
+              <span class="field__label field__label--cat" id="oilLabel"><i class="cat-dot cat-dot--oil" aria-hidden="true"></i>น้ำมัน</span>
+              <div class="chip-group" role="radiogroup" aria-labelledby="oilLabel">
+                <label class="chip"><input type="radio" name="oil" value="salmon-oil" checked><span>น้ำมันแซลมอน</span></label>
+                <label class="chip"><input type="radio" name="oil" value="olive"><span>น้ำมันมะกอก</span></label>
+                <label class="chip"><input type="radio" name="oil" value="soybean"><span>น้ำมันถั่วเหลือง</span></label>
+                <label class="chip"><input type="radio" name="oil" value="palm"><span>น้ำมันปาล์ม</span></label>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn--primary calc-card__submit">คำนวณปริมาณอาหาร</button>
+          <p class="calc-card__hint">* สำหรับสุนัขสุขภาพปกติ หากน้องมีโรคประจำตัวหรือกำลังตั้งท้อง แนะนำปรึกษาสัตวแพทย์ก่อน</p>
+        </form>
+
+        <!-- Result card -->
+        <div class="calc-result reveal" id="calcResult" aria-live="polite">
+
+          <!-- Empty state -->
+          <div class="calc-result__empty" id="resultEmpty">
+            <div class="calc-result__bowl" aria-hidden="true">
+              <svg viewBox="0 0 200 140">
+                <path d="M40 58h120c0 28-24 46-60 46s-60-18-60-46Z" fill="#E8DFC9"/>
+                <path d="M34 50h132v10c0 4-3 7-7 7H41c-4 0-7-3-7-7V50Z" fill="#5F7F5A"/>
+                <circle cx="80" cy="42" r="8" fill="#B9793F" opacity="0.35"/>
+                <circle cx="102" cy="37" r="9" fill="#A56A34" opacity="0.35"/>
+                <circle cx="122" cy="43" r="7" fill="#C08347" opacity="0.35"/>
+              </svg>
+            </div>
+            <p>กรอกข้อมูลด้านซ้ายแล้วกด <strong>คำนวณ</strong><br>ผลลัพธ์ของน้องจะแสดงตรงนี้</p>
+          </div>
+
+          <!-- Filled state -->
+          <div class="calc-result__body" id="resultBody" hidden>
+            <p class="eyebrow" id="resultEyebrow">ปริมาณแนะนำต่อวัน</p>
+            <div class="calc-result__big">
+              <strong id="resultGrams">0</strong>
+              <span>กรัม / วัน</span>
+            </div>
+            <p class="calc-result__kcal">≈ <span id="resultKcal">0</span> กิโลแคลอรีต่อวัน · <span id="resultFormulaName">สูตรไก่ &amp; ข้าวกล้อง</span></p>
+
+            <div class="calc-result__meals" id="resultMeals"></div>
+
+            <div class="recipe-breakdown" id="recipeBreakdown" hidden>
+              <p class="recipe-breakdown__title">ส่วนผสมต่อวัน (น้ำหนักหลังปรุงสุก)</p>
+              <ul id="recipeList"></ul>
+            </div>
+
+            <ul class="calc-result__facts" id="bagFacts">
+              <li>
+                <span class="calc-fact__icon" aria-hidden="true">🛍️</span>
+                <div><strong id="resultBagDays">–</strong><span id="resultBagLabel">ถุง 1.5 kg อยู่ได้ประมาณ (วัน)</span></div>
+              </li>
+              <li>
+                <span class="calc-fact__icon" aria-hidden="true">📅</span>
+                <div><strong id="resultBagsMonth">–</strong><span>จำนวนถุงที่ใช้ต่อเดือน</span></div>
+              </li>
+            </ul>
+
+            <div class="calc-result__note" id="resultNote"></div>
+
+            <div class="calc-result__cta">
+              <a href="https://line.me/R/ti/p/@dogfood" class="btn btn--line" target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5C6.2 2.5 1.5 6.4 1.5 11.2c0 4.3 3.7 7.9 8.8 8.6.34.07.8.23.92.52.1.27.07.68.03.95l-.14.9c-.05.27-.21 1.06.93.58 1.13-.48 6.12-3.6 8.35-6.17 1.54-1.69 2.11-3.4 2.11-5.34 0-4.8-4.7-8.7-10.5-8.7Zm-4.4 11.4H5.5a.55.55 0 0 1-.55-.55V9.1a.55.55 0 1 1 1.1 0v3.7h1.55a.55.55 0 1 1 0 1.1Zm2.1-.55a.55.55 0 1 1-1.1 0V9.1a.55.55 0 1 1 1.1 0v4.25Zm5.1 0a.55.55 0 0 1-.99.33l-2.16-2.94v2.61a.55.55 0 1 1-1.1 0V9.1a.55.55 0 0 1 .99-.33l2.16 2.94V9.1a.55.55 0 1 1 1.1 0v4.25Zm3.7-2.68a.55.55 0 1 1 0 1.1h-1.55v1.03h1.55a.55.55 0 1 1 0 1.1h-2.1a.55.55 0 0 1-.55-.55V9.1c0-.3.25-.55.55-.55h2.1a.55.55 0 1 1 0 1.1h-1.55v1.02h1.55Z"/></svg>
+                สั่งซื้อ / ปรึกษาแอดมิน
+              </a>
+              <p>ส่งผลลัพธ์นี้ให้แอดมินทาง LINE เพื่อรับคำแนะนำเพิ่มเติมได้เลย</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== TRANSITION GUIDE ===== -->
+    <section class="section section--tinted transition">
+      <div class="container container--narrow">
+        <p class="eyebrow reveal">เพิ่งเปลี่ยนมาให้ DoGFood?</p>
+        <h2 class="section__title reveal">ตาราง 7 วัน เปลี่ยนอาหารแบบไม่ท้องเสีย</h2>
+        <div class="transition__grid">
+          <div class="transition__step reveal">
+            <span class="transition__day">วันที่ 1–2</span>
+            <div class="transition__bar"><span style="--new:25%"></span></div>
+            <p><strong>25%</strong> DoGFood + 75% อาหารเดิม</p>
+          </div>
+          <div class="transition__step reveal">
+            <span class="transition__day">วันที่ 3–4</span>
+            <div class="transition__bar"><span style="--new:50%"></span></div>
+            <p><strong>50%</strong> DoGFood + 50% อาหารเดิม</p>
+          </div>
+          <div class="transition__step reveal">
+            <span class="transition__day">วันที่ 5–6</span>
+            <div class="transition__bar"><span style="--new:75%"></span></div>
+            <p><strong>75%</strong> DoGFood + 25% อาหารเดิม</p>
+          </div>
+          <div class="transition__step reveal">
+            <span class="transition__day">วันที่ 7</span>
+            <div class="transition__bar"><span style="--new:100%"></span></div>
+            <p><strong>100%</strong> DoGFood เต็มมื้อ</p>
+          </div>
+        </div>
+        <p class="transition__note reveal">สังเกตอึและความอยากอาหารของน้องระหว่างเปลี่ยน หากท้องเสียให้ชะลอสัดส่วนไว้ก่อน แล้วค่อยเพิ่มใหม่เมื่อปกติ</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <span class="footer__logo">DoGFood</span>
+        <p>อาหารที่ดี สำหรับเพื่อนที่เรารัก</p>
+      </div>
+      <nav class="footer__links" aria-label="ลิงก์ท้ายหน้า">
+        <a href="index.html#benefits">จุดเด่น</a>
+        <a href="index.html#products">สินค้า</a>
+        <a href="calculator.html">คำนวณอาหาร</a>
+        <a href="index.html#faq">คำถามที่พบบ่อย</a>
+        <a href="index.html#contact">ติดต่อเรา</a>
+      </nav>
+      <p class="footer__copyright">© 2026 DoGFood Co., Ltd. — Made with care in Thailand</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="calculator.js"></script>
+</body>
+</html>

@@ -990,3 +990,405 @@ ul { list-style: none; }
 
   .contact__actions .btn { width: 100%; justify-content: center; }
 }
+
+/* =========================================================
+   Calculator page
+   ========================================================= */
+.calc-hero {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(7rem, 13vw, 9.5rem) 0 clamp(1rem, 3vw, 2rem);
+  text-align: center;
+}
+.calc-hero__inner { position: relative; z-index: 1; }
+.calc-hero__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  line-height: 1.2;
+  color: var(--green-deep);
+  letter-spacing: -0.01em;
+  margin-bottom: 1rem;
+}
+.calc-hero__sub { color: var(--ink-soft); max-width: 38rem; margin-inline: auto; }
+
+.calc { padding-top: clamp(2rem, 4vw, 3rem); }
+.calc__inner {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  align-items: start;
+}
+
+/* ----- form card ----- */
+.calc-card {
+  background: var(--white);
+  border: 1px solid var(--cream-line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: clamp(1.6rem, 4vw, 2.4rem);
+}
+.calc-card__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.35rem;
+  color: var(--green-deep);
+  margin-bottom: 1.5rem;
+}
+.field { margin-bottom: 1.4rem; }
+.field label, .field__label {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--ink);
+  margin-bottom: 0.55rem;
+}
+.field label small { font-weight: 400; color: var(--ink-soft); }
+.field input[type="text"],
+.field input[type="number"] {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  color: var(--ink);
+  background: var(--cream);
+  border: 1.5px solid var(--cream-line);
+  border-radius: 14px;
+  padding: 0.8rem 1rem;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.field input:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 0 4px var(--green-soft);
+}
+.field input[aria-invalid="true"] { border-color: var(--orange-deep); }
+.field__error {
+  margin-top: 0.4rem;
+  font-size: 0.82rem;
+  color: var(--orange-deep);
+}
+
+.chip-group { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+.chip { position: relative; cursor: pointer; }
+.chip input {
+  position: absolute;
+  opacity: 0;
+  width: 100%; height: 100%;
+  cursor: pointer;
+}
+.chip span {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.88rem;
+  color: var(--ink);
+  background: var(--cream);
+  border: 1.5px solid var(--cream-line);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  transition: background 0.25s, border-color 0.25s, color 0.25s, transform 0.2s var(--ease-out);
+}
+.chip:hover span { border-color: var(--green); }
+.chip input:checked + span {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+.chip input:focus-visible + span {
+  outline: 3px solid var(--orange);
+  outline-offset: 2px;
+}
+.calc-card__submit { width: 100%; justify-content: center; margin-top: 0.4rem; }
+.calc-card__hint {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+/* ----- result card ----- */
+.calc-result {
+  position: sticky;
+  top: 96px;
+  background: linear-gradient(160deg, var(--cream-deep), var(--white) 70%);
+  border: 1px solid var(--cream-line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: clamp(1.6rem, 4vw, 2.4rem);
+  min-height: 420px;
+  display: grid;
+}
+.calc-result__empty {
+  align-self: center;
+  text-align: center;
+  color: var(--ink-soft);
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+}
+.calc-result__bowl { width: 170px; opacity: 0.9; }
+
+.calc-result__big {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  margin: 0.4rem 0 0.3rem;
+}
+.calc-result__big strong {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(3.2rem, 7vw, 4.4rem);
+  line-height: 1;
+  color: var(--green-deep);
+  letter-spacing: -0.02em;
+}
+.calc-result__big span {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--orange-deep);
+}
+.calc-result__kcal { font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 1.4rem; }
+
+.calc-result__meals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+.meal-chip {
+  background: var(--white);
+  border: 1.5px solid var(--green-soft);
+  border-radius: 16px;
+  padding: 0.55rem 1rem;
+  display: grid;
+  gap: 0.05rem;
+  min-width: 84px;
+  text-align: center;
+}
+.meal-chip span {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+}
+.meal-chip strong {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--green-deep);
+}
+
+.calc-result__facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+.calc-result__facts li {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: var(--white);
+  border: 1px solid var(--cream-line);
+  border-radius: 16px;
+  padding: 0.8rem 1rem;
+}
+.calc-fact__icon { font-size: 1.3rem; }
+.calc-result__facts strong {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--green-deep);
+  line-height: 1.2;
+}
+.calc-result__facts span { font-size: 0.75rem; color: var(--ink-soft); }
+
+.calc-result__note {
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: var(--orange-soft);
+  border-radius: 14px;
+  padding: 0.85rem 1.1rem;
+  margin-bottom: 1.5rem;
+}
+.calc-result__note strong { color: var(--orange-deep); }
+
+.calc-result__cta { display: grid; gap: 0.7rem; }
+.calc-result__cta .btn { justify-content: center; }
+.calc-result__cta p { font-size: 0.8rem; color: var(--ink-soft); text-align: center; }
+
+/* ----- transition guide ----- */
+.transition__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+  margin-bottom: 1.6rem;
+}
+.transition__step {
+  background: var(--white);
+  border: 1px solid var(--cream-line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 1.3rem 1.2rem;
+  display: grid;
+  gap: 0.7rem;
+}
+.transition__day {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: var(--orange-deep);
+}
+.transition__bar {
+  height: 12px;
+  border-radius: 999px;
+  background: var(--cream-deep);
+  overflow: hidden;
+}
+.transition__bar span {
+  display: block;
+  height: 100%;
+  width: var(--new);
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--green), #7FA179);
+}
+.transition__step p { font-size: 0.85rem; color: var(--ink-soft); }
+.transition__step p strong {
+  font-family: var(--font-display);
+  color: var(--green-deep);
+}
+.transition__note {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  background: var(--white);
+  border: 1px dashed var(--cream-line);
+  border-radius: 14px;
+  padding: 0.9rem 1.2rem;
+}
+
+/* nav current page */
+.nav__links a.is-active { color: var(--orange-deep); font-weight: 500; }
+.nav__links a.is-active::after { transform: scaleX(1); }
+
+/* responsive */
+@media (max-width: 960px) {
+  .calc__inner { grid-template-columns: 1fr; }
+  .calc-result { position: static; min-height: 0; }
+  .calc-result__empty { padding: 1.5rem 0; }
+  .transition__grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 680px) {
+  .transition__grid { grid-template-columns: 1fr; }
+  .calc-result__facts { grid-template-columns: 1fr; }
+}
+
+/* =========================================================
+   Calculator — custom recipe builder
+   ========================================================= */
+.mode-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  background: var(--cream);
+  border: 1.5px solid var(--cream-line);
+  border-radius: 999px;
+  padding: 0.35rem;
+}
+.mode-toggle__opt { position: relative; cursor: pointer; }
+.mode-toggle__opt input {
+  position: absolute;
+  opacity: 0;
+  width: 100%; height: 100%;
+  cursor: pointer;
+}
+.mode-toggle__opt span {
+  display: block;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  padding: 0.6rem 0.5rem;
+  border-radius: 999px;
+  transition: background 0.25s, color 0.25s, box-shadow 0.25s;
+}
+.mode-toggle__opt input:checked + span {
+  background: var(--green);
+  color: #fff;
+  box-shadow: 0 6px 14px -6px rgba(51, 80, 47, 0.5);
+}
+.mode-toggle__opt input:focus-visible + span {
+  outline: 3px solid var(--orange);
+  outline-offset: 2px;
+}
+
+.custom-builder {
+  border: 1.5px dashed var(--cream-line);
+  border-radius: var(--radius-md);
+  background: var(--cream);
+  padding: 1.2rem 1.2rem 0.2rem;
+  margin-bottom: 1.4rem;
+}
+.custom-builder .field { margin-bottom: 1.1rem; }
+.custom-builder .chip span { background: var(--white); }
+
+.field__label--cat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cat-dot {
+  width: 11px; height: 11px;
+  border-radius: 46% 54% 52% 48% / 52% 46% 54% 48%;
+  flex-shrink: 0;
+}
+.cat-dot--meat { background: var(--orange); }
+.cat-dot--rice { background: #C6A15B; }
+.cat-dot--veg { background: var(--green); }
+.cat-dot--oil { background: #E5C34A; }
+
+/* recipe breakdown in result card */
+.recipe-breakdown { margin-bottom: 1.5rem; }
+.recipe-breakdown__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--ink);
+  margin-bottom: 0.7rem;
+}
+.recipe-breakdown ul { display: grid; gap: 0.55rem; }
+.recipe-breakdown li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--white);
+  border: 1px solid var(--cream-line);
+  border-radius: 14px;
+  padding: 0.7rem 1rem;
+}
+.recipe-item__icon { font-size: 1.15rem; }
+.recipe-item__name {
+  flex: 1;
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+.recipe-item__name small { color: var(--ink-soft); font-size: 0.75rem; }
+.recipe-item__grams {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--green-deep);
+  white-space: nowrap;
+}
+.recipe-item__grams small {
+  font-weight: 400;
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+}
+
+/* multi-paragraph notes */
+.calc-result__note p + p {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed rgba(217, 111, 31, 0.25);
+}
